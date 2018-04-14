@@ -1,0 +1,9 @@
+flask==0.12.2
+h5py==2.7.1
+opencv-python==3.4.0.12
+tensorflow==1.2.1
+keras==2.1.4
+git+https://www.github.com/keras-team/keras-contrib.git
+numpy==1.12.1
+Pillow==5.1.0
+scikit-image==0.13.1
