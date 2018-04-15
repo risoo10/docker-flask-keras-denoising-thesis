@@ -7,5 +7,7 @@ COPY requirements.txt /tmp/
 RUN pip install -U pip
 RUN pip install -r /tmp/requirements.txt
 
+ENV NGINX_WORKER_PROCESSES 1
+
 # copy over our app code
 COPY ./app /app
