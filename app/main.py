@@ -45,20 +45,18 @@ def preprocess_image(image):
 
     # Resize image to max 1024 x 1024 and
     image.thumbnail((1024, 1024), Image.ANTIALIAS)
-    print(image.width, image.height)
+    print("Start preprocessing (resize to size)", image.width, image.height)
     curWidth, curHeight = image.width, image.height
 
     # Resize to be divisible by patch size
     width = int(curWidth / PATCH_SIZE) * PATCH_SIZE
     height = int(curHeight / PATCH_SIZE) * PATCH_SIZE
-    print('Resize', width, height)
     image = image.resize((width, height), Image.ANTIALIAS)
     image = np.asarray(image)
-    print(image.shape)
 
     # Normalize
     image = image.astype('float32') / 255
-    print(image.shape)
+    print("Finished preprocessing", image.shape)
     return image
 
 
@@ -67,6 +65,8 @@ def denoise_image_inteligent():
     try:
         if request.method == "POST":
             if request.files.get("image"):
+
+                print("Started prediction ...")
 
                 # Read Image from bytes and save to uploads by time
                 image = request.files["image"].read()
@@ -86,14 +86,17 @@ def denoise_image_inteligent():
                 # Flatten to 1D array of patches
                 patches = patches.reshape((patch_count_ver * patch_count_hor, patches.shape[3], patches.shape[4], patches.shape[5]))
 
-                print('Patches', patches.shape)
+                print('Extract patches', patches.shape)
 
                 # Predict results
+                print("Keras computation ................")
                 denoised_patches = model.predict(patches)
+                print("Keras finished !!!! ")
 
                 # Reshape back to 2D array of patches
                 denoised_patches = denoised_patches.reshape((patch_count_ver, patch_count_hor, patches.shape[1], patches.shape[2], patches.shape[3]))
 
+                print("Reconstruct image and save ...")
                 # Reconstruct final image from patches
                 reconstructed = extract_join_patches.patch_together(denoised_patches, image_size=(width, height))
 
@@ -101,9 +104,9 @@ def denoise_image_inteligent():
                 result_image = cv2.cvtColor(np.uint8(reconstructed * 255), cv2.COLOR_BGR2RGB)
 
                 # Save to results folder
-
                 image_path = 'static/results/result_{}.jpg'.format(time_string)
                 cv2.imwrite(image_path, result_image)
+                print("Succesfully finished.")
 
                 data = {
                     "succes": True,
