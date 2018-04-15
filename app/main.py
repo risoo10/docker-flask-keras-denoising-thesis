@@ -115,5 +115,5 @@ def denoise_image_inteligent():
 if __name__ == "__main__":
     loss = dssim.DSSIMObjective()
     model = load_model("models/{}.h5".format(FILENAME), custom_objects={'weighted_loss': weighted_loss})
-    app.run(port=80)
+    app.run(host="0.0.0.0", port=80)
 
