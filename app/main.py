@@ -18,8 +18,8 @@ app = Flask(__name__)
 
 FILENAME = "conv-deconv-renoir-64x64-CON-16F-TRANSP-8D"
 
-global model
-global loss
+model = 0
+loss = 0
 
 # My own loss function
 def weighted_loss(y_true, y_pred):
@@ -66,6 +66,9 @@ def denoise_image_inteligent():
     try:
         if request.method == "POST":
             if request.files.get("image"):
+
+                global model
+                global loss
 
                 # Read Image from bytes and save to uploads by time
                 image = request.files["image"].read()
