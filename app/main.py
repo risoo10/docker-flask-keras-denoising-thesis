@@ -67,9 +67,11 @@ def denoise_image_inteligent():
         if request.method == "POST":
             if request.files.get("image"):
 
-                # Read Image from bytes
+                # Read Image from bytes and save to uploads by time
                 image = request.files["image"].read()
                 image = Image.open(io.BytesIO(image))
+                time_string = time.strftime("%Y%m%d-%H%M%S")
+                image.save("static/uploads/upload_{}.jpg".format(time_string))
 
                 # Preprocess image
                 image = preprocess_image(image)
@@ -98,8 +100,8 @@ def denoise_image_inteligent():
                 result_image = cv2.cvtColor(np.uint8(reconstructed * 255), cv2.COLOR_BGR2RGB)
 
                 # Save to results folder
-                time_string = time.strftime("%Y%m%d-%H%M%S")
-                image_path = 'results/result_{}.jpg'.format(time_string)
+
+                image_path = 'static/results/result_{}.jpg'.format(time_string)
                 cv2.imwrite(image_path, result_image)
 
                 data = {
